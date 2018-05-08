@@ -30,7 +30,7 @@ def convert_and_upload_every_file(fileList=[]):
     for id in fileList:
         filename = download_mp4(id)
         print("file: "+filename)
-        mp3_filepath = convert_mp4_to_mp3(filename)
+        mp3_filepath = convert_to_mp3(filename)
         upload_mp3(mp3_filepath,ulid)
         cleanup(id, mp3_filepath)
         
@@ -39,32 +39,39 @@ def download_mp4(id):
     return putio.download_file(confdict, id, "./working")
 
 
-def convert_mp4_to_mp3(filename_with_extension):
+def convert_to_mp3(filename_with_extension):
     indir = "./working"
     outdir = "./outdir"
-    print(filename_with_extension[0:-4]) 
+
     if filename_with_extension[-4:] == ".mp4":
-        filename = filename_with_extension[0:-4]
-        print("-- converting {0}/{2}.mp4 to {1}/{2}.mp3 --".format(indir, outdir, filename))
-        call(["mplayer", "-novideo", "-nocorrect-pts", "-ao", "pcm:waveheader", indir + "/" + filename +".mp4"])
-
-        if not os.path.exists(outdir):   
-            os.makedirs(outdir)
-
-        call(["lame", "-v", "audiodump.wav", outdir + "/" + filename + ".mp3"])
-        os.remove("audiodump.wav")
-        os.remove(indir + "/" + filename_with_extension)
-        print(outdir + "/" + filename + ".mp3"+"mp4")
-        return outdir + "/" + filename + ".mp3"
-
+        return convert_mp4_to_mp3(filename_with_extension, indir, outdir)
     elif filename_with_extension[-5:] == ".webm": 
-        filename = filename_with_extension[0:-5]
-        call(["ffmpeg", "-i", indir + "/" + filename_with_extension, "-vn", "-ab", "128k", "-ar", "44100",
-                "-y", outdir + "/" + filename + ".mp3"])
-        #os.remove(indir + "/" + filename_with_extension)
-        print(outdir + "/" + filename + ".mp3"+"webm")
-        return outdir + "/" + filename + ".mp3"
+        return converti_webm_to_mp3(filename_with_extension,indir,outdir)
 
+
+def convert_mp4_to_mp3(filename_with_extension, indir, outdir):
+    filename = filename_with_extension[0:-4]
+    
+    call(["mplayer", "-novideo", "-nocorrect-pts", "-ao", "pcm:waveheader", indir + "/" + filename +".mp4"])
+
+    if not os.path.exists(outdir):   
+        os.makedirs(outdir)
+
+    call(["lame", "-v", "audiodump.wav", outdir + "/" + filename + ".mp3"])
+    os.remove("audiodump.wav")
+    os.remove(indir + "/" + filename_with_extension)
+    
+    return outdir + "/" + filename + ".mp3"
+
+
+def convert_webm_to_mp3(filename_with_extension, indir, outdir):
+    filename = filename_with_extension[0:-5]
+    
+    call(["ffmpeg", "-i", indir + "/" + filename_with_extension, "-vn", "-ab", "128k", "-ar", "44100",
+            "-y", outdir + "/" + filename + ".mp3"])
+    os.remove(indir + "/" + filename_with_extension)
+    
+    return outdir + "/" + filename + ".mp3"
 
 
 def upload_mp3(mp3_path, upload_id):
