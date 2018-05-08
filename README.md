@@ -1,3 +1,5 @@
 # putio_mp4conv
 
-dowloads mp4s from put.io, converts to mp3 and uploads it to another folder
+Dowloads mp4s and webms from put.io, converts to mp3 and uploads it to another folder
+
+Requirements: LAME, mplayer, ffmpeg
