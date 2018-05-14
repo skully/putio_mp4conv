@@ -46,32 +46,34 @@ def convert_to_mp3(filename_with_extension):
     if filename_with_extension[-4:] == ".mp4":
         return convert_mp4_to_mp3(filename_with_extension, indir, outdir)
     elif filename_with_extension[-5:] == ".webm": 
-        return converti_webm_to_mp3(filename_with_extension,indir,outdir)
+        return convert_webm_to_mp3(filename_with_extension,indir,outdir)
 
 
-def convert_mp4_to_mp3(filename_with_extension, indir, outdir):
-    filename = filename_with_extension[0:-4]
-    
-    call(["mplayer", "-novideo", "-nocorrect-pts", "-ao", "pcm:waveheader", indir + "/" + filename +".mp4"])
+def convert(convertfunc):
 
-    if not os.path.exists(outdir):   
-        os.makedirs(outdir)
+    def convert_wrapper(filename_with_extension  ,indir, outdir):
+        filename = ".".join(filename_with_extension.split(".")[0:-1])
 
-    call(["lame", "-v", "audiodump.wav", outdir + "/" + filename + ".mp3"])
-    os.remove("audiodump.wav")
-    os.remove(indir + "/" + filename_with_extension)
-    
-    return outdir + "/" + filename + ".mp3"
+        if not os.path.exists(outdir):   
+            os.makedirs(outdir)
+
+        convertfunc(filename, indir, outdir)    
+        os.remove(indir + "/" + filename_with_extension)
+        return outdir + "/" + filename + ".mp3"
+
+    return convert_wrapper
 
 
-def convert_webm_to_mp3(filename_with_extension, indir, outdir):
-    filename = filename_with_extension[0:-5]
-    
-    call(["ffmpeg", "-i", indir + "/" + filename_with_extension, "-vn", "-ab", "128k", "-ar", "44100",
-            "-y", outdir + "/" + filename + ".mp3"])
-    os.remove(indir + "/" + filename_with_extension)
-    
-    return outdir + "/" + filename + ".mp3"
+@convert
+def convert_mp4_to_mp3(filename, indir, outdir):
+    call(["ffmpeg", "-i", indir + "/" + filename + ".mp4",  "-b:a", "192K", 
+            "-vn", outdir + "/" + filename + ".mp3"])
+
+
+@convert
+def convert_webm_to_mp3(filename, indir, outdir):
+    call(["ffmpeg", "-i", indir + "/" + filename + ".webm", "-vn", "-ab", 
+            "128k", "-ar", "44100", "-y", outdir + "/" + filename + ".mp3"])
 
 
 def upload_mp3(mp3_path, upload_id):
@@ -97,7 +99,6 @@ def main():
     confdict = putio.config()
     fileList = get_file_list()
     convert_and_upload_every_file(fileList)
-
 
 
 if __name__ == '__main__':
