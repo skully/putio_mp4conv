@@ -28,14 +28,14 @@ def get_file_list():
 def convert_and_upload_every_file(fileList=[]):
     ulid = get_file_id(ul_dirname)
     for id in fileList:
-        filename = download_mp4(id)
-        print("file: "+filename)
+        filename = download_video(id)
+        print("file: " + filename)
         mp3_filepath = convert_to_mp3(filename)
         upload_mp3(mp3_filepath,ulid)
         cleanup(id, mp3_filepath)
         
 
-def download_mp4(id):
+def download_video(id):
     return putio.download_file(confdict, id, "./working")
 
 
@@ -81,11 +81,11 @@ def upload_mp3(mp3_path, upload_id):
 
 
 def cleanup(id, mp3_path):
-    move_mp4_in_putio(id)
+    move_video_in_putio(id)
     delete_mp3_on_host(mp3_path)
 
 
-def move_mp4_in_putio(id):
+def move_video_in_putio(id):
     done_id = get_file_id(done_dirname)
     putio.move_file(confdict, id, done_id)
 
