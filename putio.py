@@ -26,11 +26,21 @@ def config():
 def get_filelist(confDict, id):
     payload = {'oauth_token':confDict['oauth']}
 
-    if id == 0:
-        result = requests.get("https://api.put.io/v2/files/list", params=payload)
-    else:
+    if id != 0:
         payload.update({'parent_id': id})
-        result = requests.get("https://api.put.io/v2/files/list", params=payload)
+
+    result = requests.get("https://api.put.io/v2/files/list", params=payload)
+
+    parsed = json.loads(result.text)
+    return parsed
+
+
+def search(confDict, word):
+    payload = {'oauth_token':confDict['oauth']}
+    query = "from:me " + word
+    payload["query"] = query
+
+    result = requests.get("https://api.put.io/v2/files/search/", params=payload)
 
     parsed = json.loads(result.text)
     return parsed
