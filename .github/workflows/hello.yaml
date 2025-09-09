@@ -8,7 +8,7 @@ on:
 jobs:
   run-hello:
     environment:
-      name: asdfasdf
+      name: myenv
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
