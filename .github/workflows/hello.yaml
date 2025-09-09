@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Hello World
-        run: python hello.py
+        run: echo hello
