@@ -21,3 +21,4 @@ jobs:
         run: |
           echo "Hello ${{ matrix.name }}"
           source .github/workflows/t.env.sh
+          echo "The result is ${DB_PASSWORD} intentionally written here" 
