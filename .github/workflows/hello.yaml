@@ -14,6 +14,9 @@ jobs:
     environment:
       name: ${{ matrix.name }}
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        
       - name: Say Hello
         run: |
           echo "Hello ${{ matrix.name }}"
