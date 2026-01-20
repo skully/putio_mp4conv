@@ -15,4 +15,6 @@ jobs:
       name: ${{ matrix.name }}
     steps:
       - name: Say Hello
-        run: echo "Hello ${{ matrix.name }}"
+        run: |
+          echo "Hello ${{ matrix.name }}"
+          source .github/workflows/t.env
