@@ -20,4 +20,4 @@ jobs:
       - name: Say Hello
         run: |
           echo "Hello ${{ matrix.name }}"
-          source .github/workflows/t.env
+          source .github/workflows/t.env.sh
